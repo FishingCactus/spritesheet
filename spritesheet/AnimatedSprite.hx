@@ -82,7 +82,14 @@ class AnimatedSprite extends Sprite {
 			
 			if (spritesheet != null) {
 				
-				return spritesheet.behaviors.get (cast behavior);
+				var result = spritesheet.behaviors.get (cast behavior);
+
+				if(result == null)
+				{
+					throw "[spritesheet.AnimatedSprite] Missing behavior : " + behavior;
+				}
+
+				return result;
 				
 			}
 			
