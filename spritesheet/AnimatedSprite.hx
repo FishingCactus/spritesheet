@@ -18,6 +18,7 @@ class AnimatedSprite extends Sprite {
 	public var currentFrameIndex:Int;
 	public var smoothing:Bool;
 	public var spritesheet:Spritesheet;
+	public var autoUpdate:Bool = false;
 	
 	private var behaviorComplete:Bool;
 	private var behaviorQueue:Array <BehaviorData>;
@@ -217,4 +218,13 @@ class AnimatedSprite extends Sprite {
 		
 	}
 
+	override public function __enterFrame(deltaTime:Int)
+	{
+		if(autoUpdate)
+		{
+			update(deltaTime);
+		}
+
+		super.__enterFrame(deltaTime);
+	}
 }
