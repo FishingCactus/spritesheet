@@ -168,6 +168,8 @@ class AnimatedSprite extends Sprite {
 			bitmap.height = frame.height;
 			bitmap.textureUvs = frame.textureUvs;
 
+			__setRenderDirty();
+
 			if (behaviorComplete) {
 				
 				if (behaviorQueue.length > 0) {
@@ -202,7 +204,6 @@ class AnimatedSprite extends Sprite {
 				if (bitmap.bitmapData == null) {
 					
 					update (0);
-					
 				}
 				
 			}
