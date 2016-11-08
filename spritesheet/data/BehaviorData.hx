@@ -10,10 +10,12 @@ class BehaviorData {
 	public var frameData:Array <Dynamic>;
 	public var frameRate:Int;
 	public var frames:Array <Int>;
-	public var loop:Bool;
+	public var loopIndex:Int;
 	public var name:String;
 	public var originX:Float;
 	public var originY:Float;
+	
+	public var loop (get,set):Bool;
 	
 	private static var uniqueID:Int = 0;
 	
@@ -56,5 +58,17 @@ class BehaviorData {
 		
 	}
 	
+	public function get_loop ():Bool {
+		
+		return loopIndex != -1;
+		
+	}
+
+	public function set_loop (value:Bool):Bool {
+		
+		loopIndex = value ? 0 : -1;
+		return value;
+		
+	}
 	
 }

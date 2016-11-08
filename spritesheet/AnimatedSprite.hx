@@ -22,7 +22,9 @@ class AnimatedSprite extends Sprite {
 	private var behaviorComplete:Bool;
 	private var behaviorQueue:Array <BehaviorData>;
 	private var behavior:BehaviorData;
-	private var loopTime:Int;
+	private var startPhaseDuration:Int;
+	private var loopPhaseDuration:Int;
+	private var totalDuration:Int;
 	private var timeElapsed:Int;
 	
 
@@ -137,13 +139,15 @@ class AnimatedSprite extends Sprite {
 			// Number of frames in the animation
 			var frameCount = currentBehavior.frames.length;
 
-			var ratio = timeElapsed / loopTime;
+			var ratio = timeElapsed / totalDuration;
 			
 			if (ratio >= 1) {
 				
 				if (currentBehavior.loop) {
 					
-					ratio -= Math.floor (ratio);
+					var loopRatio = (timeElapsed - startPhaseDuration)/ loopPhaseDuration;
+					loopRatio -= Math.floor (loopRatio);
+					ratio = (startPhaseDuration + loopRatio * loopPhaseDuration) / totalDuration;
 					
 				} else {
 					
@@ -196,7 +200,19 @@ class AnimatedSprite extends Sprite {
 				timeElapsed = 0;
 				behaviorComplete = false;
 				
-				loopTime = Std.int ((behavior.frames.length / behavior.frameRate) * 1000);
+				if (behavior.loop) {
+					
+					startPhaseDuration = Std.int ((behavior.loopIndex / behavior.frameRate) * 1000);
+					loopPhaseDuration = Std.int (((behavior.frames.length - behavior.loopIndex) / currentBehavior.frameRate) * 1000);
+					
+				} else {
+					
+					startPhaseDuration = 0;
+					loopPhaseDuration = Std.int ((behavior.frames.length / behavior.frameRate) * 1000);
+					
+				}
+				
+				totalDuration = startPhaseDuration + loopPhaseDuration;
 				
 				if (bitmap.bitmapData == null) {
 					
