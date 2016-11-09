@@ -18,6 +18,7 @@ class AnimatedSprite extends Sprite {
 	public var currentFrameIndex:Int;
 	public var smoothing:Bool;
 	public var spritesheet:Spritesheet;
+	public var autoUpdate:Bool = false;
 	
 	private var behaviorComplete:Bool;
 	private var behaviorQueue:Array <BehaviorData>;
@@ -171,6 +172,8 @@ class AnimatedSprite extends Sprite {
 			bitmap.height = frame.height;
 			bitmap.textureUvs = frame.textureUvs;
 
+			__setRenderDirty();
+
 			if (behaviorComplete) {
 				
 				if (behaviorQueue.length > 0) {
@@ -217,7 +220,6 @@ class AnimatedSprite extends Sprite {
 				if (bitmap.bitmapData == null) {
 					
 					update (0);
-					
 				}
 				
 			}
@@ -233,4 +235,13 @@ class AnimatedSprite extends Sprite {
 		
 	}
 
+	override public function __enterFrame(deltaTime:Int)
+	{
+		if(autoUpdate)
+		{
+			update(deltaTime);
+		}
+
+		super.__enterFrame(deltaTime);
+	}
 }
