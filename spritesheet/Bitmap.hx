@@ -26,17 +26,14 @@ class Bitmap extends FlashBitmap {
 
 			super.__renderGL(renderSession);
 
-		}
-		else {
+		} else {
 
-			__preRenderGL (renderSession);
+			var savedUvs = bitmapData.__uvData;
 			
-			if (__renderable && __worldAlpha > 0 && bitmapData != null && bitmapData.__isValid) {
-				// :TODO: should use Bitmap.width and height but mimicking original behavior here
-				renderSession.spriteBatch.renderBitmapDataEx(bitmapData, bitmapData.width, bitmapData.height, textureUvs, smoothing, __renderTransform, __worldColorTransform, __worldAlpha, __blendMode, __shader, pixelSnapping);
-			}
-			
-			__postRenderGL (renderSession);
+			bitmapData.__uvData = textureUvs;
+			super.__renderGL(renderSession);
+
+			bitmapData.__uvData = savedUvs;
 
 		}
 
