@@ -14,7 +14,7 @@ class Spritesheet {
 	public var behaviors:Map <String, BehaviorData>;
 	public var name:String;
 	public var totalFrames:Int;
-	public var usePerFrameBitmapData(default, null):Bool;
+	public var usePerFrameBitmapData(default, default):Bool;
 	
 	private var frames:Array <SpritesheetFrame>;
 	private var sourceImage:BitmapData;
@@ -51,6 +51,23 @@ class Spritesheet {
 		this.usePerFrameBitmapData = usePerFrameBitmapData;
 	}
 	
+	public function dispose() : Void {
+		if ( this.sourceImage != null ) {
+			this.sourceImage.dispose();
+			this.sourceImage = null;
+		}
+		if ( this.sourceImageAlpha != null ) {
+			this.sourceImageAlpha.dispose();
+			this.sourceImageAlpha = null;
+		}
+		if ( usePerFrameBitmapData ) {
+			for( frame in frames ) {
+				frame.bitmapData.dispose();
+				frame.bitmapData = null;
+			}
+		}
+	}
+
 	
 	public function addBehavior (behavior:BehaviorData):Void {
 		
@@ -86,8 +103,10 @@ class Spritesheet {
 		if (usePerFrameBitmapData) {
 
 			bitmapData = new BitmapData (frame.width, frame.height, true);
-			var sourceRectangle = new Rectangle (frame.x, frame.y, frame.width, frame.height);
-			var targetPoint = new Point ();
+			var sourceRectangle = Rectangle.pool.get();
+			sourceRectangle.setTo (frame.x, frame.y, frame.width, frame.height);
+			var targetPoint = Point.pool.get();
+			targetPoint.setTo(0,0);
 			
 			bitmapData.copyPixels (sourceImage, sourceRectangle, targetPoint);
 			
@@ -96,6 +115,9 @@ class Spritesheet {
 				bitmapData.copyChannel (sourceImageAlpha, sourceRectangle, targetPoint, 2, 8);
 				
 			}
+
+			Rectangle.pool.put(sourceRectangle);
+			Point.pool.put(targetPoint);
 		}
 		else {
 
