@@ -94,6 +94,8 @@ class AnimatedSprite extends Sprite {
 
 				return result;
 				
+			} else {
+				throw "[spritesheet.AnimatedSprite] No spritesheet set when trying to resolve behavior!";
 			}
 			
 		}
