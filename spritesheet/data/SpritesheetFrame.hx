@@ -9,6 +9,8 @@ class SpritesheetFrame {
 	
 	public var name:String;
 	public var bitmapData:BitmapData;
+	public var displayHeight:Int;
+	public var displayWidth:Int;
 	public var height:Int;
 	public var offsetX:Int;
 	public var offsetY:Int;
@@ -21,8 +23,8 @@ class SpritesheetFrame {
 		
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.width = this.displayWidth = width;
+		this.height = this.displayHeight = height;
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 		
