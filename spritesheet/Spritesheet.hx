@@ -51,6 +51,15 @@ class Spritesheet {
 		this.usePerFrameBitmapData = usePerFrameBitmapData;
 	}
 	
+	public function reset() : Void {
+		dispose ();
+
+		this.frames = new Array <SpritesheetFrame> ();
+		totalFrames = 0;
+
+		this.behaviors = new Map <String, BehaviorData> ();
+	}
+
 	public function dispose() : Void {
 		if ( this.sourceImage != null ) {
 			this.sourceImage.dispose();
