@@ -51,6 +51,15 @@ class Spritesheet {
 		this.usePerFrameBitmapData = usePerFrameBitmapData;
 	}
 	
+	public function reset() : Void {
+		dispose ();
+
+		this.frames = new Array <SpritesheetFrame> ();
+		totalFrames = 0;
+
+		this.behaviors = new Map <String, BehaviorData> ();
+	}
+
 	public function dispose() : Void {
 		if ( this.sourceImage != null ) {
 			this.sourceImage.dispose();
@@ -251,7 +260,18 @@ class Spritesheet {
 	
 	public function updateImage (image:BitmapData, imageAlpha:BitmapData = null):Void {
 		
+		if (sourceImage != null) {
+			sourceImage.dispose();
+			sourceImage = null;
+		}
+
 		sourceImage = image;
+
+		if (sourceImageAlpha != null) {
+			sourceImageAlpha.dispose();
+			sourceImageAlpha = null;
+		}
+
 		sourceImageAlpha = imageAlpha;
 		
 		for (frame in frames) {
