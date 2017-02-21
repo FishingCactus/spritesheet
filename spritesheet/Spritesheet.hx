@@ -260,7 +260,18 @@ class Spritesheet {
 	
 	public function updateImage (image:BitmapData, imageAlpha:BitmapData = null):Void {
 		
+		if (sourceImage != null) {
+			sourceImage.dispose();
+			sourceImage = null;
+		}
+
 		sourceImage = image;
+
+		if (sourceImageAlpha != null) {
+			sourceImageAlpha.dispose();
+			sourceImageAlpha = null;
+		}
+
 		sourceImageAlpha = imageAlpha;
 		
 		for (frame in frames) {
