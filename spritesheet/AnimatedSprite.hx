@@ -170,8 +170,8 @@ class AnimatedSprite extends Sprite {
 			bitmap.smoothing = smoothing;
 			bitmap.x = frame.offsetX - currentBehavior.originX;
 			bitmap.y = frame.offsetY - currentBehavior.originY;
-			bitmap.width = frame.width;
-			bitmap.height = frame.height;
+			bitmap.width = frame.displayWidth;
+			bitmap.height = frame.displayHeight;
 			bitmap.textureUvs = frame.textureUvs;
 
 			__setRenderDirty();
