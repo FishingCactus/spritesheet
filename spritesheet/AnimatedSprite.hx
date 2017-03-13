@@ -15,7 +15,7 @@ class AnimatedSprite extends Sprite {
 	
 	public var bitmap:Bitmap;
 	public var currentBehavior:BehaviorData;
-	public var currentFrameIndex:Int;
+	public var currentFrameIndex(get, set):Int;
 	public var smoothing:Bool;
 	public var spritesheet:Spritesheet;
 	public var autoUpdate:Bool = false;
@@ -27,6 +27,7 @@ class AnimatedSprite extends Sprite {
 	private var loopPhaseDuration:Int;
 	private var totalDuration:Int;
 	private var timeElapsed:Int;
+	private var __currentFrameIndex:Int;
 	
 
 	public function new (sheet:Spritesheet, smoothing:Bool = false) {
@@ -245,5 +246,13 @@ class AnimatedSprite extends Sprite {
 		}
 
 		super.__enterFrame(deltaTime);
+	}
+
+	private function get_currentFrameIndex() {
+		return __currentFrameIndex;
+	}
+
+	private function set_currentFrameIndex(index) {
+		return __currentFrameIndex = index;
 	}
 }
