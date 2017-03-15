@@ -67,7 +67,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         // Don't change the behavior. just advance frames.
         if (Std.is (frame, Int)) {
 			ratio = cast(frame, Float) / (clip.currentBehavior.frames.length-1);
-            @:privateAccess clip.timeElapsed = Std.int(ratio * clip.totalDuration);
+            @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
             @:privateAccess clip.behaviorComplete = false;
 		} else if (Std.is (frame, String)) {
             clip.showBehavior(frame);
