@@ -2,6 +2,8 @@ package spritesheet;
 
 class SpritesheetMovieClip extends openfl.display.MovieClip {
 
+    public var autoUpdate(get, set):Bool;
+
     private var clip : AnimatedSprite;
 
     // movieclip functions
@@ -47,6 +49,14 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     public function showBehavior (behavior:Dynamic, restart:Bool = true):Void {
         clip.showBehavior(behavior, restart);
+    }
+
+    public function set_autoUpdate(value) {
+        return clip.autoUpdate = value;
+    }
+
+    public function get_autoUpdate() {
+        return clip.autoUpdate;
     }
 
     // private
