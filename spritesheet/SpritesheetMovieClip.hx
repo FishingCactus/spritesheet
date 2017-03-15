@@ -27,6 +27,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     public override function gotoAndStop (frame:Dynamic, scene:String = null):Void {
         __goto(frame, scene);
         stop();
+        clip.update(0);
     }
 
     public override function play() {
