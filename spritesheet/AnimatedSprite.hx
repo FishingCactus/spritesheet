@@ -11,15 +11,16 @@ import spritesheet.Bitmap;
 
 
 class AnimatedSprite extends Sprite {
-	
-	
+
+	public inline static var UPDATE_CURRENT_FRAME:String = "UpdateCurrentFrame";
+
 	public var bitmap:Bitmap;
 	public var currentBehavior:BehaviorData;
-	public var currentFrameIndex:Int;
+	public var currentFrameIndex(get, set):Int;
 	public var smoothing:Bool;
 	public var spritesheet:Spritesheet;
 	public var autoUpdate:Bool = false;
-	
+
 	private var behaviorComplete:Bool;
 	private var behaviorQueue:Array <BehaviorData>;
 	private var behavior:BehaviorData;
@@ -27,64 +28,65 @@ class AnimatedSprite extends Sprite {
 	private var loopPhaseDuration:Int;
 	private var totalDuration:Int;
 	private var timeElapsed:Int;
-	
+	private var __currentFrameIndex:Int = 0;
+
 
 	public function new (sheet:Spritesheet, smoothing:Bool = false) {
-		
+
 		super ();
-		
+
 		this.smoothing = smoothing;
 		this.spritesheet = sheet;
-		
+
 		behaviorQueue = new Array <BehaviorData> ();
 		bitmap = new Bitmap ();
 		addChild (bitmap);
-		
+
 	}
-	
-	
+
+
 	public function getFrameData (index:Int):Dynamic {
-		
+
 		if (currentBehavior != null && currentBehavior.frameData.length > index) {
-			
+
 			return currentBehavior.frameData[index];
-			
+
 		} else {
-			
+
 			return null;
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	public function queueBehavior (behavior:Dynamic):Void {
-		
+
 		var behaviorData = resolveBehavior (behavior);
-		
+
 		if (currentBehavior == null) {
-			
+
 			updateBehavior (behaviorData);
-			
+
 		} else {
-			
+
 			behaviorQueue.push (behaviorData);
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	private function resolveBehavior (behavior:Dynamic):BehaviorData {
-		
+
 		if (Std.is (behavior, BehaviorData)) {
-			
+
 			return cast behavior;
-			
+
 		} else if (Std.is (behavior, String)) {
-			
+
 			if (spritesheet != null) {
-				
+
 				var result = spritesheet.behaviors.get (cast behavior);
 
 				if(result == null)
@@ -93,79 +95,93 @@ class AnimatedSprite extends Sprite {
 				}
 
 				return result;
-				
+
 			} else {
 				throw "[spritesheet.AnimatedSprite] No spritesheet set when trying to resolve behavior!";
 			}
-			
+
 		}
-		
+
 		return null;
-		
+
 	}
-	
-	
+
+
 	public function showBehavior (behavior:Dynamic, restart:Bool = true):Void {
-		
+
 		behaviorQueue = new Array <BehaviorData> ();
-		
+
 		updateBehavior (resolveBehavior (behavior), restart);
-		
+
 	}
-	
-	
+
+
 	public function showBehaviors (behaviors:Array <Dynamic>):Void {
-		
+
 		behaviorQueue = new Array <BehaviorData> ();
-		
+
 		for (behavior in behaviors) {
-			
+
 			behaviorQueue.push (resolveBehavior (behavior));
-			
+
 		}
-		
+
 		if (behaviorQueue.length > 0) {
-			
+
 			updateBehavior (behaviorQueue.shift ());
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	public function update (deltaTime:Int):Void {
-		
+
 		if (!behaviorComplete) {
-			
+
 			timeElapsed += deltaTime;
 
 			// Number of frames in the animation
 			var frameCount = currentBehavior.frames.length;
 
 			var ratio = timeElapsed / totalDuration;
-			
+
 			if (ratio >= 1) {
-				
+
 				if (currentBehavior.loop) {
-					
+
 					var loopRatio = (timeElapsed - startPhaseDuration)/ loopPhaseDuration;
 					loopRatio -= Math.floor (loopRatio);
 					ratio = (startPhaseDuration + loopRatio * loopPhaseDuration) / totalDuration;
-					
+
 				} else {
-					
+
 					behaviorComplete = true;
 					ratio = 1.0 - 1e-6;
 
 				}
-				
+
 			}
 
-			currentFrameIndex = Math.floor(ratio * frameCount);
+			var previous_frame = currentFrameIndex;
+			var new_frame = Math.floor(ratio * frameCount);
+			// execute potential framescripts
+			if ( previous_frame > new_frame ) {
+				for(i in previous_frame...frameCount-1) {
+					currentFrameIndex = i + 1;
+				}
+				for(i in 0...new_frame) {
+					currentFrameIndex = i + 1;
+				}
+			} else {
+				for(i in previous_frame...new_frame) {
+					currentFrameIndex = i + 1;
+				}
+			}
 
 			var frame = spritesheet.getFrame (currentBehavior.frames [currentFrameIndex]);
-			
-			
+
+
 			bitmap.bitmapData = frame.bitmapData;
 			bitmap.smoothing = smoothing;
 			bitmap.x = frame.offsetX - currentBehavior.originX;
@@ -177,64 +193,64 @@ class AnimatedSprite extends Sprite {
 			__setRenderDirty();
 
 			if (behaviorComplete) {
-				
+
 				if (behaviorQueue.length > 0) {
-					
+
 					updateBehavior (behaviorQueue.shift ());
-					
+
 				} else if (hasEventListener (Event.COMPLETE)) {
-					
+
 					dispatchEvent (new Event (Event.COMPLETE));
-					
-				}		
-				
+
+				}
+
 			}
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	private function updateBehavior (behavior:BehaviorData, restart:Bool = true):Void {
-		
+
 		if (behavior != null) {
-			
+
 			if (restart || behavior != currentBehavior) {
-				
+
 				currentBehavior = behavior;
 				timeElapsed = 0;
 				behaviorComplete = false;
-				
+
 				if (behavior.loop) {
-					
+
 					startPhaseDuration = Std.int ((behavior.loopIndex / behavior.frameRate) * 1000);
 					loopPhaseDuration = Std.int (((behavior.frames.length - behavior.loopIndex) / currentBehavior.frameRate) * 1000);
-					
+
 				} else {
-					
+
 					startPhaseDuration = 0;
 					loopPhaseDuration = Std.int ((behavior.frames.length / behavior.frameRate) * 1000);
-					
+
 				}
-				
+
 				totalDuration = startPhaseDuration + loopPhaseDuration;
-				
+
 				if (bitmap.bitmapData == null) {
-					
+
 					update (0);
 				}
-				
+
 			}
-			
+
 		} else {
-			
+
 			bitmap.bitmapData = null;
 			currentBehavior = null;
 			currentFrameIndex = -1;
 			behaviorComplete = true;
-			
+
 		}
-		
+
 	}
 
 	override public function __enterFrame(deltaTime:Int)
@@ -245,5 +261,15 @@ class AnimatedSprite extends Sprite {
 		}
 
 		super.__enterFrame(deltaTime);
+	}
+
+	private function get_currentFrameIndex() {
+		return __currentFrameIndex;
+	}
+
+	private function set_currentFrameIndex(index) {
+		__currentFrameIndex = index;
+		dispatchEvent(new Event(UPDATE_CURRENT_FRAME));
+		return __currentFrameIndex;
 	}
 }
