@@ -170,8 +170,8 @@ class AnimatedSprite extends Sprite {
 				for(i in previous_frame...frameCount-1) {
 					currentFrameIndex = i + 1;
 				}
-				for(i in 0...new_frame) {
-					currentFrameIndex = i + 1;
+				for(i in 0...new_frame+1) {
+					currentFrameIndex = i;
 				}
 			} else {
 				for(i in previous_frame...new_frame) {
