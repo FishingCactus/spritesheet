@@ -16,6 +16,9 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     }
 
     public override function get_totalFrames() {
+        if(clip.currentBehavior != null) {
+            return clip.currentBehavior.frames.length;
+        }
         return clip.spritesheet.totalFrames;
     }
 
