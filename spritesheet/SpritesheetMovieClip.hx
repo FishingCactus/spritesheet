@@ -5,13 +5,13 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     public var autoUpdate(get, set):Bool;
 
     private var clip : AnimatedSprite;
+    private var lastFrameIndex:Int = -1;
 
     // movieclip functions
 
     public function new(sheet:Spritesheet, smoothing:Bool = false) {
         super();
         clip = new AnimatedSprite(sheet, smoothing);
-        clip.addEventListener(AnimatedSprite.UPDATE_CURRENT_FRAME, checkFrameScript);
         addChild(clip);
     }
 
@@ -41,6 +41,22 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         clip.autoUpdate = false;
     }
 
+    override public function __enterFrame(deltaTime:Int) {
+        var currentFrameIndex = @:privateAccess clip.__currentFrameIndex;
+
+        if(currentFrameIndex != lastFrameIndex) {
+            if (__frameScripts != null) {
+                for(index in lastFrameIndex+1...currentFrameIndex+1) {
+                    if (__frameScripts.exists (index)) {
+                        __frameScripts.get (index) ();
+                    }
+                }
+            }
+
+            lastFrameIndex = currentFrameIndex;
+        }
+    }
+
     // Animated Sprite forwarding
 
     public function getFrameData(index:Int):Dynamic {
@@ -53,6 +69,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     public function showBehavior (behavior:Dynamic, restart:Bool = true):Void {
         clip.showBehavior(behavior, restart);
+        lastFrameIndex = -1;
     }
 
     public function set_autoUpdate(value) {
@@ -74,15 +91,6 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
             @:privateAccess clip.behaviorComplete = false;
 		} else if (Std.is (frame, String)) {
             clip.showBehavior(frame);
-        }
-    }
-
-    private function checkFrameScript(event) {
-        if (__frameScripts != null) {
-            var index = @:privateAccess clip.__currentFrameIndex;
-            if (__frameScripts.exists (index)) {
-                __frameScripts.get (index) ();
-            }
         }
     }
 }
