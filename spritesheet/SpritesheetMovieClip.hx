@@ -42,19 +42,35 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     }
 
     override public function __enterFrame(deltaTime:Int) {
-        var currentFrameIndex = @:privateAccess clip.__currentFrameIndex;
+        __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
 
-        if(currentFrameIndex != lastFrameIndex) {
-            if (__frameScripts != null) {
-                for(index in lastFrameIndex+1...currentFrameIndex+1) {
-                    if (__frameScripts.exists (index)) {
-                        __frameScripts.get (index) ();
-                    }
+        __updateFrame();
+    }
+
+    private function __renderFrame(index:Int):Bool {
+
+        lastFrameIndex = index + 1;
+
+        if (__frameScripts != null) {
+            if (__frameScripts.exists (index)) {
+                __frameScripts.get (index) ();
+
+                if(index  + 1 != __currentFrame){
+                    return true;
                 }
             }
-
-            lastFrameIndex = currentFrameIndex;
         }
+        if (__staticFrameScripts != null) {
+            if (__staticFrameScripts.exists (index)) {
+                __staticFrameScripts.get (index) (this);
+
+                if(index  + 1 != __currentFrame){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     // Animated Sprite forwarding
@@ -86,11 +102,42 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         var ratio:Float = 0;
         // Don't change the behavior. just advance frames.
         if (Std.is (frame, Int)) {
-			ratio = cast(frame, Float) / (clip.currentBehavior.frames.length-1);
+            ratio = cast(frame, Float) / (clip.currentBehavior.frames.length-1);
             @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
             @:privateAccess clip.behaviorComplete = false;
-		} else if (Std.is (frame, String)) {
+        } else if (Std.is (frame, String)) {
             clip.showBehavior(frame);
+        }
+    }
+
+    private function __updateFrame ():Void {
+
+        if (__currentFrame != lastFrameIndex) {
+            var scriptHasChangedFlow : Bool;
+
+            if(__currentFrame < lastFrameIndex) {
+                var cacheCurrentFrame = __currentFrame;
+                for(frameIndex in (lastFrameIndex ... totalFrames)) {
+                    scriptHasChangedFlow = __renderFrame(frameIndex);
+                    if (scriptHasChangedFlow) {
+                        break;
+                    }
+                }
+
+                for(frameIndex in (0 ... cacheCurrentFrame)) {
+                    scriptHasChangedFlow = __renderFrame(frameIndex);
+                    if (scriptHasChangedFlow) {
+                        break;
+                    }
+                }
+            } else {
+                for(frameIndex in (lastFrameIndex ... __currentFrame)) {
+                    scriptHasChangedFlow = __renderFrame(frameIndex);
+                    if (scriptHasChangedFlow) {
+                        break;
+                    }
+                }
+            }
         }
     }
 }
