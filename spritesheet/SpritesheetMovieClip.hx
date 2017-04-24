@@ -5,13 +5,13 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     public var autoUpdate(get, set):Bool;
 
     private var clip : AnimatedSprite;
+    private var lastFrameIndex:Int = -1;
 
     // movieclip functions
 
     public function new(sheet:Spritesheet, smoothing:Bool = false) {
         super();
         clip = new AnimatedSprite(sheet, smoothing);
-        clip.addEventListener(AnimatedSprite.UPDATE_CURRENT_FRAME, checkFrameScript);
         addChild(clip);
     }
 
@@ -41,6 +41,38 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         clip.autoUpdate = false;
     }
 
+    override public function __enterFrame(deltaTime:Int) {
+        __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
+
+        __updateFrame();
+    }
+
+    private function __renderFrame(index:Int):Bool {
+
+        lastFrameIndex = index + 1;
+
+        if (__frameScripts != null) {
+            if (__frameScripts.exists (index)) {
+                __frameScripts.get (index) ();
+
+                if(index  + 1 != __currentFrame){
+                    return true;
+                }
+            }
+        }
+        if (__staticFrameScripts != null) {
+            if (__staticFrameScripts.exists (index)) {
+                __staticFrameScripts.get (index) (this);
+
+                if(index  + 1 != __currentFrame){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     // Animated Sprite forwarding
 
     public function getFrameData(index:Int):Dynamic {
@@ -53,6 +85,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     public function showBehavior (behavior:Dynamic, restart:Bool = true):Void {
         clip.showBehavior(behavior, restart);
+        lastFrameIndex = -1;
     }
 
     public function set_autoUpdate(value) {
@@ -69,19 +102,41 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         var ratio:Float = 0;
         // Don't change the behavior. just advance frames.
         if (Std.is (frame, Int)) {
-			ratio = cast(frame, Float) / (clip.currentBehavior.frames.length-1);
+            ratio = cast(frame, Float) / (clip.currentBehavior.frames.length-1);
             @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
             @:privateAccess clip.behaviorComplete = false;
-		} else if (Std.is (frame, String)) {
+        } else if (Std.is (frame, String)) {
             clip.showBehavior(frame);
         }
     }
 
-    private function checkFrameScript(event) {
-        if (__frameScripts != null) {
-            var index = @:privateAccess clip.__currentFrameIndex;
-            if (__frameScripts.exists (index)) {
-                __frameScripts.get (index) ();
+    private function __updateFrame ():Void {
+
+        if (__currentFrame != lastFrameIndex) {
+            var scriptHasChangedFlow : Bool;
+
+            if(__currentFrame < lastFrameIndex) {
+                var cacheCurrentFrame = __currentFrame;
+                for(frameIndex in (lastFrameIndex ... totalFrames)) {
+                    scriptHasChangedFlow = __renderFrame(frameIndex);
+                    if (scriptHasChangedFlow) {
+                        break;
+                    }
+                }
+
+                for(frameIndex in (0 ... cacheCurrentFrame)) {
+                    scriptHasChangedFlow = __renderFrame(frameIndex);
+                    if (scriptHasChangedFlow) {
+                        break;
+                    }
+                }
+            } else {
+                for(frameIndex in (lastFrameIndex ... __currentFrame)) {
+                    scriptHasChangedFlow = __renderFrame(frameIndex);
+                    if (scriptHasChangedFlow) {
+                        break;
+                    }
+                }
             }
         }
     }

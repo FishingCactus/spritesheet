@@ -12,8 +12,6 @@ import spritesheet.Bitmap;
 
 class AnimatedSprite extends Sprite {
 
-	public inline static var UPDATE_CURRENT_FRAME:String = "UpdateCurrentFrame";
-
 	public var bitmap:Bitmap;
 	public var currentBehavior:BehaviorData;
 	public var currentFrameIndex(get, set):Int;
@@ -268,8 +266,6 @@ class AnimatedSprite extends Sprite {
 	}
 
 	private function set_currentFrameIndex(index) {
-		__currentFrameIndex = index;
-		dispatchEvent(new Event(UPDATE_CURRENT_FRAME));
-		return __currentFrameIndex;
+		return __currentFrameIndex = index;
 	}
 }
