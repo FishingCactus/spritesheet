@@ -43,6 +43,7 @@ class TexturePackerImporter {
         frame.frame = parseJsonRect(json.frame);
         frame.spriteSourceSize = parseJsonRect(json.spriteSourceSize);
         frame.sourceSize = parseJsonSize(json.sourceSize);
+        frame.label = json.label;
         return frame;
 
     }
@@ -103,6 +104,8 @@ class TexturePackerImporter {
                 var tpFrame:TPFrame = frames[i];
                 var sFrame = new SpritesheetFrame ( tpFrame.frame.x, tpFrame.frame.y, tpFrame.frame.w, tpFrame.frame.h );
 
+                sFrame.label = tpFrame.label;
+
                 if( tpFrame.trimmed )
                 {
 
@@ -140,6 +143,7 @@ class TPFrame {
     public function new():Void {}
 
     public var filename:String;
+    public var label:String;
     public var frame:TPRect;
     public var rotated:Bool;
     public var trimmed:Bool;

@@ -8,6 +8,7 @@ class SpritesheetFrame {
 	
 	
 	public var name:String;
+	public var label:String;
 	public var bitmapData:BitmapData;
 	public var displayHeight:Int;
 	public var displayWidth:Int;

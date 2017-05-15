@@ -286,5 +286,15 @@ class Spritesheet {
 		
 	}
 	
-	
+	public function getBehaviorFrameIndexFromLabel(behavior:BehaviorData, label:String):Int {
+		var behavior_frames = behavior.frames;
+
+		for (i in 0...behavior_frames.length) {
+			if(frames[behavior_frames[i]].label == label) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
 }
