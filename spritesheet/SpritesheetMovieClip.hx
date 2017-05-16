@@ -43,6 +43,11 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     override public function __enterFrame(deltaTime:Int) {
         __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
+        __currentFrameLabel = @:privateAccess clip.__currentFrame.label;
+
+        if(__currentFrameLabel != null) {
+            __currentLabel = __currentFrameLabel;
+        }
 
         __updateFrame();
     }
@@ -99,14 +104,20 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     // private
 
     private function __goto (frame:Dynamic, scene:String = null) {
-        var ratio:Float = 0;
+        var targetFrame = -1;
         // Don't change the behavior. just advance frames.
         if (Std.is (frame, Int)) {
-            ratio = cast(frame, Float) / (clip.currentBehavior.frames.length-1);
+           targetFrame = frame;
+        } else if (Std.is (frame, String)) {
+            if(clip.currentBehavior != null) {
+                targetFrame= clip.spritesheet.getBehaviorFrameIndexFromLabel(clip.currentBehavior, frame);
+            }
+        }
+
+        if(targetFrame != -1) {
+            var ratio:Float = cast(targetFrame, Float) / (clip.currentBehavior.frames.length-1);
             @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
             @:privateAccess clip.behaviorComplete = false;
-        } else if (Std.is (frame, String)) {
-            clip.showBehavior(frame);
         }
     }
 

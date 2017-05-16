@@ -7,6 +7,7 @@ import flash.events.Event;
 import flash.Lib;
 
 import spritesheet.data.BehaviorData;
+import spritesheet.data.SpritesheetFrame;
 import spritesheet.Bitmap;
 
 
@@ -27,6 +28,7 @@ class AnimatedSprite extends Sprite {
 	private var totalDuration:Int;
 	private var timeElapsed:Int;
 	private var __currentFrameIndex:Int = 0;
+	private var __currentFrame:SpritesheetFrame;
 
 
 	public function new (sheet:Spritesheet, smoothing:Bool = false) {
@@ -179,7 +181,7 @@ class AnimatedSprite extends Sprite {
 
 			var frame = spritesheet.getFrame (currentBehavior.frames [currentFrameIndex]);
 
-
+			__currentFrame = frame;
 			bitmap.bitmapData = frame.bitmapData;
 			bitmap.smoothing = smoothing;
 			bitmap.x = frame.offsetX - currentBehavior.originX;
