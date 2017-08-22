@@ -43,10 +43,15 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     override public function __enterFrame(deltaTime:Int) {
         __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
-        __currentFrameLabel = @:privateAccess clip.__currentFrame.label;
 
-        if(__currentFrameLabel != null) {
-            __currentLabel = __currentFrameLabel;
+        var clipCurrentFrame = @:privateAccess clip.__currentFrame;
+
+        if(clipCurrentFrame != null){
+            __currentFrameLabel = clipCurrentFrame.label;
+
+            if(__currentFrameLabel != null) {
+                __currentLabel = __currentFrameLabel;
+            }
         }
 
         __updateFrame();
