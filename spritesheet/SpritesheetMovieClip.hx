@@ -34,26 +34,33 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     }
 
     public override function play() {
-        clip.autoUpdate = true;
+        if ( !clip.autoUpdate ) {
+            clip.autoUpdate = true;
+        }
     }
 
     public override function stop() {
-        clip.autoUpdate = false;
+        if ( clip.autoUpdate ) {
+            clip.autoUpdate = false;
+        }
     }
 
     override public function __enterFrame(deltaTime:Int) {
-        __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
-        __currentFrameLabel = @:privateAccess clip.__currentFrame.label;
+        if ( clip.autoUpdate ) {
+            __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
+            __currentFrameLabel = @:privateAccess clip.__currentFrame.label;
 
-        if(__currentFrameLabel != null) {
-            __currentLabel = __currentFrameLabel;
+            if(__currentFrameLabel != null) {
+                __currentLabel = __currentFrameLabel;
+            }
+
+            __updateFrame();
         }
-
-        __updateFrame();
     }
 
     private function __renderFrame(index:Int):Bool {
 
+        __currentFrame = index + 1;
         lastFrameIndex = index + 1;
 
         if (__frameScripts != null) {
@@ -124,27 +131,28 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     private function __updateFrame ():Void {
 
         if (__currentFrame != lastFrameIndex) {
-            var scriptHasChangedFlow : Bool;
+            var scriptHasChangedFlow : Bool = false;
 
             if(__currentFrame < lastFrameIndex) {
                 var cacheCurrentFrame = __currentFrame;
                 for(frameIndex in (lastFrameIndex ... totalFrames)) {
                     scriptHasChangedFlow = __renderFrame(frameIndex);
-                    if (scriptHasChangedFlow) {
+                    if (!clip.autoUpdate || scriptHasChangedFlow) {
                         break;
                     }
                 }
-
-                for(frameIndex in (0 ... cacheCurrentFrame)) {
-                    scriptHasChangedFlow = __renderFrame(frameIndex);
-                    if (scriptHasChangedFlow) {
-                        break;
+                if (clip.autoUpdate && !scriptHasChangedFlow){
+                    for(frameIndex in (0 ... cacheCurrentFrame)) {
+                        scriptHasChangedFlow = __renderFrame(frameIndex);
+                        if (!clip.autoUpdate || scriptHasChangedFlow) {
+                            break;
+                        }
                     }
                 }
             } else {
                 for(frameIndex in (lastFrameIndex ... __currentFrame)) {
                     scriptHasChangedFlow = __renderFrame(frameIndex);
-                    if (scriptHasChangedFlow) {
+                    if (!clip.autoUpdate || scriptHasChangedFlow) {
                         break;
                     }
                 }
