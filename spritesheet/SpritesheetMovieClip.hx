@@ -34,15 +34,11 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     }
 
     public override function play() {
-        if ( !clip.autoUpdate ) {
-            clip.autoUpdate = true;
-        }
+        clip.autoUpdate = true;
     }
 
     public override function stop() {
-        if ( clip.autoUpdate ) {
-            clip.autoUpdate = false;
-        }
+        clip.autoUpdate = false;
     }
 
     override public function __enterFrame(deltaTime:Int) {
