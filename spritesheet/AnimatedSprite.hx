@@ -243,22 +243,20 @@ class AnimatedSprite extends Sprite {
 	}
 
 	private function set_currentFrameIndex(index) {
-		if (__currentFrameIndex != index) {
-			__currentFrameIndex = index;
+		__currentFrameIndex = index;
 
-			var frame = spritesheet.getFrame (currentBehavior.frames [currentFrameIndex]);
+		var frame = spritesheet.getFrame (currentBehavior.frames [currentFrameIndex]);
 
-			__currentFrame = frame;
-			bitmap.bitmapData = frame.bitmapData;
-			bitmap.smoothing = smoothing;
-			bitmap.x = frame.offsetX - currentBehavior.originX;
-			bitmap.y = frame.offsetY - currentBehavior.originY;
-			bitmap.width = frame.displayWidth;
-			bitmap.height = frame.displayHeight;
-			bitmap.textureUvs = frame.textureUvs;
+		__currentFrame = frame;
+		bitmap.bitmapData = frame.bitmapData;
+		bitmap.smoothing = smoothing;
+		bitmap.x = frame.offsetX - currentBehavior.originX;
+		bitmap.y = frame.offsetY - currentBehavior.originY;
+		bitmap.width = frame.displayWidth;
+		bitmap.height = frame.displayHeight;
+		bitmap.textureUvs = frame.textureUvs;
 
-			__setRenderDirty();
-		}
+		__setRenderDirty();
 
 		return index;
 	}
