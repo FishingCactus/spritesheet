@@ -62,7 +62,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     override public function __enterFrame(deltaTime:Int) {
 
         #if dev
-        if ( clip.autoUpdate == true ) {
+        if ( clip.autoUpdate ) {
             throw "Autoupdate should not be set on spritesheet movieclips. Handled internally!";
         }
         #end
