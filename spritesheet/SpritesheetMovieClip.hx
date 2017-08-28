@@ -1,15 +1,19 @@
 package spritesheet;
 
-class SpritesheetMovieClip extends openfl.display.MovieClip {
+import format.swf.lite.SWFLite;
 
-    public var autoUpdate(get, set):Bool;
+
+class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     private var clip : AnimatedSprite;
     private var lastFrameIndex:Int = -1;
+    private var __swf: SWFLite;
+    private var __playing : Bool;
+    private var __timeElapsed:Int;
 
     // movieclip functions
 
-    public function new(sheet:Spritesheet, smoothing:Bool = false) {
+    public function new(swf:SWFLite, sheet:Spritesheet, smoothing:Bool = false) {
         super();
         clip = new AnimatedSprite(sheet, smoothing);
         addChild(clip);
@@ -34,24 +38,56 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     }
 
     public override function play() {
-        clip.autoUpdate = true;
+        if (!__playing) {
+            __playing = true;
+            __timeElapsed = 0;
+        }
     }
 
     public override function stop() {
-        clip.autoUpdate = false;
+        __playing = false;
     }
 
+    private inline function __getFrameTime():Int {
+		var frameTime = stage.frameTime;
+
+		if (frameTime != null) {
+			return frameTime;
+		} else {
+			return __swf.frameTime;
+		}
+	}
+
     override public function __enterFrame(deltaTime:Int) {
-        if ( clip.autoUpdate ) {
-            __currentFrame = @:privateAccess clip.__currentFrameIndex + 1;
+
+        #if dev
+        if ( clip.autoUpdate == true ) {
+            throw "Autoupdate should not be set on spritesheet movieclips. Handled internally!";
+        }
+        #end
+        if (__playing) {
+
+			__timeElapsed += deltaTime;
+
+			var frameTime = __getFrameTime();
+			var advanceFrames = Math.floor (__timeElapsed / frameTime);
+			__timeElapsed = (__timeElapsed % frameTime);
+
+			__currentFrame += advanceFrames;
+
+			while (__currentFrame > totalFrames) {
+
+				__currentFrame -= totalFrames;
+
+			}
+
+			__updateFrame ();
+
+            clip.currentFrameIndex = __currentFrame - 1;
             __currentFrameLabel = @:privateAccess clip.__currentFrame.label;
 
-            if(__currentFrameLabel != null) {
-                __currentLabel = __currentFrameLabel;
-            }
+		}
 
-            __updateFrame();
-        }
     }
 
     private function __renderFrame(index:Int):Bool {
@@ -96,14 +132,6 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         lastFrameIndex = -1;
     }
 
-    public function set_autoUpdate(value) {
-        return clip.autoUpdate = value;
-    }
-
-    public function get_autoUpdate() {
-        return clip.autoUpdate;
-    }
-
     // private
 
     private function __goto (frame:Dynamic, scene:String = null) {
@@ -133,14 +161,14 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
                 var cacheCurrentFrame = __currentFrame;
                 for(frameIndex in (lastFrameIndex ... totalFrames)) {
                     scriptHasChangedFlow = __renderFrame(frameIndex);
-                    if (!clip.autoUpdate || scriptHasChangedFlow) {
+                    if (!__playing || scriptHasChangedFlow) {
                         break;
                     }
                 }
-                if (clip.autoUpdate && !scriptHasChangedFlow){
+                if (__playing && !scriptHasChangedFlow){
                     for(frameIndex in (0 ... cacheCurrentFrame)) {
                         scriptHasChangedFlow = __renderFrame(frameIndex);
-                        if (!clip.autoUpdate || scriptHasChangedFlow) {
+                        if (!__playing || scriptHasChangedFlow) {
                             break;
                         }
                     }
@@ -148,7 +176,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
             } else {
                 for(frameIndex in (lastFrameIndex ... __currentFrame)) {
                     scriptHasChangedFlow = __renderFrame(frameIndex);
-                    if (!clip.autoUpdate || scriptHasChangedFlow) {
+                    if (!__playing || scriptHasChangedFlow) {
                         break;
                     }
                 }

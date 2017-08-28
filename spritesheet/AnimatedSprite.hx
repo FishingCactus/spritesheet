@@ -164,33 +164,8 @@ class AnimatedSprite extends Sprite {
 			}
 
 			var previous_frame = currentFrameIndex;
-			var new_frame = Math.floor(ratio * frameCount);
-			// execute potential framescripts
-			if ( previous_frame > new_frame ) {
-				for(i in previous_frame...frameCount-1) {
-					currentFrameIndex = i + 1;
-				}
-				for(i in 0...new_frame+1) {
-					currentFrameIndex = i;
-				}
-			} else {
-				for(i in previous_frame...new_frame) {
-					currentFrameIndex = i + 1;
-				}
-			}
 
-			var frame = spritesheet.getFrame (currentBehavior.frames [currentFrameIndex]);
-
-			__currentFrame = frame;
-			bitmap.bitmapData = frame.bitmapData;
-			bitmap.smoothing = smoothing;
-			bitmap.x = frame.offsetX - currentBehavior.originX;
-			bitmap.y = frame.offsetY - currentBehavior.originY;
-			bitmap.width = frame.displayWidth;
-			bitmap.height = frame.displayHeight;
-			bitmap.textureUvs = frame.textureUvs;
-
-			__setRenderDirty();
+			currentFrameIndex = Math.floor(ratio * frameCount);
 
 			if (behaviorComplete) {
 
@@ -268,6 +243,21 @@ class AnimatedSprite extends Sprite {
 	}
 
 	private function set_currentFrameIndex(index) {
-		return __currentFrameIndex = index;
+		__currentFrameIndex = index;
+
+		var frame = spritesheet.getFrame (currentBehavior.frames [currentFrameIndex]);
+
+		__currentFrame = frame;
+		bitmap.bitmapData = frame.bitmapData;
+		bitmap.smoothing = smoothing;
+		bitmap.x = frame.offsetX - currentBehavior.originX;
+		bitmap.y = frame.offsetY - currentBehavior.originY;
+		bitmap.width = frame.displayWidth;
+		bitmap.height = frame.displayHeight;
+		bitmap.textureUvs = frame.textureUvs;
+
+		__setRenderDirty();
+
+		return index;
 	}
 }
