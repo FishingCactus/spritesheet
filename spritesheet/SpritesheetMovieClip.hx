@@ -18,6 +18,8 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         clip = new AnimatedSprite(sheet, smoothing);
         __currentFrame = 1;
         addChild(clip);
+
+        play ();
     }
 
     public override function get_totalFrames() {
