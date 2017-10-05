@@ -154,6 +154,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
             @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
             @:privateAccess clip.behaviorComplete = false;
         }
+        __currentFrame = targetFrame;
     }
 
     private function __updateFrame ():Void {
