@@ -1,6 +1,7 @@
 package spritesheet;
 
 import format.swf.lite.SWFLite;
+import format.swf.lite.symbols.SWFSymbol;
 
 
 class SpritesheetMovieClip extends openfl.display.MovieClip {
@@ -10,15 +11,17 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     private var __swf: SWFLite;
     private var __playing : Bool;
     private var __timeElapsed:Int;
+    private var __originalSymbol:SWFSymbol;
 
     // movieclip functions
 
-    public function new(swf:SWFLite, sheet:Spritesheet, smoothing:Bool = false) {
+    public function new(swf:SWFLite, sheet:Spritesheet, smoothing:Bool = false, originalSymbol:SWFSymbol = null) {
         super();
         clip = new AnimatedSprite(sheet, smoothing);
         __currentFrame = 1;
         addChild(clip);
         __swf = swf;
+        __originalSymbol = originalSymbol;
 
         play ();
     }
@@ -119,6 +122,10 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         }
 
         return false;
+    }
+
+    public override function getSymbol():SWFSymbol{
+        return __originalSymbol;
     }
 
     // Animated Sprite forwarding
