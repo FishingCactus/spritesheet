@@ -157,7 +157,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
         }
 
         if(targetFrame != -1) {
-            var ratio:Float = cast(targetFrame, Float) / (clip.currentBehavior.frames.length-1);
+            var ratio:Float = cast(targetFrame - 1, Float) / (clip.currentBehavior.frames.length);
             @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
             @:privateAccess clip.behaviorComplete = false;
         }
