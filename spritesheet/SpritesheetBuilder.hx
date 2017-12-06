@@ -40,7 +40,7 @@ class SpritesheetBuilder {
         spritesheet = new Spritesheet (bitmapData);
     }
 
-    public function add(displayObject:MovieClip, behaviorName:String) {
+    public function add(displayObject:DisplayObject, behaviorName:String) {
         var frameTable = [];
 
         if (displayObject == null) {
@@ -48,8 +48,7 @@ class SpritesheetBuilder {
             frameTable.push (spritesheet.totalFrames);
             spritesheet.addFrame (frame);
         } else {
-            for (frameIndex in 1...displayObject.totalFrames+1) {
-                displayObject.gotoAndStop (frameIndex);
+            function addSingle(displayObject:DisplayObject) {
                 displayObject.__update (true, true);
 
                 var renderBounds = Rectangle.pool.get ();
@@ -76,9 +75,10 @@ class SpritesheetBuilder {
                 Matrix.pool.put (transform);
 
                 var frame = new SpritesheetFrame (nextX, nextY, width, height);
-                frame.displayHeight = width;
-                frame.displayWidth = height;
-                // :TODO: frame offset
+                frame.displayHeight = height;
+                frame.displayWidth = width;
+                frame.offsetX = Math.floor (renderBounds.x) - padding;
+                frame.offsetY = Math.floor (renderBounds.y) - padding;
 
                 Rectangle.pool.put (renderBounds);
 
@@ -86,6 +86,17 @@ class SpritesheetBuilder {
                 spritesheet.addFrame (frame);
 
                 nextX += width;
+            }
+
+            if (Std.is(displayObject, MovieClip)) {
+                var mc = cast(displayObject, MovieClip);
+                for (frameIndex in 1...mc.totalFrames+1) {
+                    mc.gotoAndStop (frameIndex);
+                    addSingle(mc);
+                }
+            }
+            else {
+                addSingle(displayObject);
             }
         }
 
