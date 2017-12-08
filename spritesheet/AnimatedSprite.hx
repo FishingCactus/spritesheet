@@ -210,10 +210,7 @@ class AnimatedSprite extends Sprite {
 
 				totalDuration = startPhaseDuration + loopPhaseDuration;
 
-				if (bitmap.bitmapData == null) {
-
-					update (0);
-				}
+				update (0);
 
 			}
 
