@@ -152,7 +152,8 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
            targetFrame = frame;
         } else if (Std.is (frame, String)) {
             if(clip.currentBehavior != null) {
-                targetFrame= clip.spritesheet.getBehaviorFrameIndexFromLabel(clip.currentBehavior, frame);
+                targetFrame = clip.spritesheet.getBehaviorFrameIndexFromLabel(clip.currentBehavior, frame);
+                targetFrame += 1;
             }
         }
 
