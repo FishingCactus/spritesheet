@@ -13,6 +13,7 @@ class LibGDXImporter {
 	
 	
 	public var frameRate:Int = 30;
+	public var usePerFrameBitmapData:Bool = true;
 	
 	
 	public function new () {
@@ -79,7 +80,7 @@ class LibGDXImporter {
 			
 		}
 		
-		return new Spritesheet (bitmapData, allFrames, allBehaviors);
+		return new Spritesheet (bitmapData, allFrames, allBehaviors, usePerFrameBitmapData);
 		
 	}
 	
