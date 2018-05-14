@@ -8,6 +8,7 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
 
     private var clip : AnimatedSprite;
     private var lastFrameIndex:Int = -1;
+    private var __changingFlow:Bool = false;
     private var __swf: SWFLite;
     private var __playing : Bool;
     private var __timeElapsed:Int;
@@ -34,14 +35,18 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     }
 
     public override function gotoAndPlay (frame:Dynamic, scene:String = null):Void {
-        __goto(frame, scene);
-        play();
+        if ( __goto(frame, scene) )
+        {
+            play();
+        }
     }
 
     public override function gotoAndStop (frame:Dynamic, scene:String = null):Void {
-        __goto(frame, scene);
-        stop();
-        clip.update(0);
+        if ( __goto(frame, scene) )
+        {
+            stop();
+            clip.update(0);
+        }
     }
 
     public override function play() {
@@ -146,23 +151,40 @@ class SpritesheetMovieClip extends openfl.display.MovieClip {
     // private
 
     private function __goto (frame:Dynamic, scene:String = null) {
-        var targetFrame = -1;
-        // Don't change the behavior. just advance frames.
-        if (Std.is (frame, Int)) {
-           targetFrame = frame;
-        } else if (Std.is (frame, String)) {
-            if(clip.currentBehavior != null) {
-                targetFrame = clip.spritesheet.getBehaviorFrameIndexFromLabel(clip.currentBehavior, frame);
-                targetFrame += 1;
+        if ( !__changingFlow )
+        {
+            var targetFrame = -1;
+            // Don't change the behavior. just advance frames.
+            if (Std.is (frame, Int)) {
+            targetFrame = frame;
+            } else if (Std.is (frame, String)) {
+                if(clip.currentBehavior != null) {
+                    targetFrame = clip.spritesheet.getBehaviorFrameIndexFromLabel(clip.currentBehavior, frame);
+                    targetFrame += 1;
+                }
             }
+
+            if(targetFrame != -1) {
+                var ratio:Float = cast(targetFrame - 1, Float) / (clip.currentBehavior.frames.length);
+                @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
+                @:privateAccess clip.behaviorComplete = false;
+            }
+
+            __changingFlow = true;
+
+            do {
+                __playing = true;
+                __currentFrame = targetFrame;
+                __updateFrame ();
+
+            } while (targetFrame != __currentFrame);
+
+            __changingFlow = false;
+
+            return __playing;
         }
 
-        if(targetFrame != -1) {
-            var ratio:Float = cast(targetFrame - 1, Float) / (clip.currentBehavior.frames.length);
-            @:privateAccess clip.timeElapsed = Std.int(ratio * @:privateAccess clip.totalDuration);
-            @:privateAccess clip.behaviorComplete = false;
-        }
-        __currentFrame = targetFrame;
+        return false;
     }
 
     private function __updateFrame ():Void {
