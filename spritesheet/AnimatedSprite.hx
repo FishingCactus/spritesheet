@@ -240,8 +240,11 @@ class AnimatedSprite extends Sprite {
 	}
 
 	private function set_currentFrameIndex(index) {
-		if (index < 0) index = 0;
-        else if (index >= currentBehavior.frames.length) index = currentBehavior.frames.length - 1;
+        if ((index < 0) || (currentBehavior != null && currentBehavior.frames != null && index >= currentBehavior.frames.length))
+        {
+            __currentFrameIndex = -1;
+            return __currentFrameIndex;
+        }
 
         __currentFrameIndex = index;
 
