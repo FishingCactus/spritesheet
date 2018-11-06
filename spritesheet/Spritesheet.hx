@@ -131,7 +131,8 @@ class Spritesheet {
 		else {
 
 			var uvs:TextureUvs = new TextureUvs();
-			bitmapData = sourceImage;
+			bitmapData = new BitmapData (null, null, null, null, true);
+			bitmapData.shallowCopyFrom(sourceImage);
 			var x = frame.x / sourceImage.width;
 			var y = frame.y / sourceImage.height;
 			var w = frame.width / sourceImage.width;
@@ -147,6 +148,7 @@ class Spritesheet {
 			uvs.y3 = y + h;
 			frame.textureUvs = uvs;
 
+			@:privateAccess bitmapData.__createUVs(uvs.x0, uvs.y0, uvs.x1, uvs.y1, uvs.x2, uvs.y2, uvs.x3, uvs.y3);
 		}
 
 		frame.bitmapData = bitmapData;
