@@ -1,6 +1,7 @@
 package spritesheet.wrapper;
 
 import openfl.display.BitmapData;
+import openfl.display.IBitmapData;
 import openfl.Assets;
 import openfl.display.api.ISpritesheet;
 import flash.display.DisplayObject;
@@ -29,7 +30,7 @@ class GdxLibSpritesheetWrapper implements ISpritesheet
             importer = new LibGDXImporter();
             importer.usePerFrameBitmapData = spritesheetConfig.usePerFrameBitmapData;
             var metaData:String = Assets.getText(spritesheetConfig.metaFilePath);
-            var textureData : BitmapData= Assets.getBitmapData(spritesheetConfig.textureFilePath);
+            var textureData = cast( Assets.getBitmapData(spritesheetConfig.textureFilePath), BitmapData );
             var exp:EReg = spritesheetConfig.exp == null ? new EReg(".*", "") : spritesheetConfig.exp;
             spritesheet = importer.parse(metaData, textureData, exp);
             spritesheet.generateBitmaps();
@@ -41,7 +42,7 @@ class GdxLibSpritesheetWrapper implements ISpritesheet
         return displayObject;
     }
 
-    public function getBitmapDataByFrameName(frameName:String): BitmapData {
+    public function getBitmapDataByFrameName(frameName:String): IBitmapData {
         return spritesheet.getFrameByName(getFrameNameWithoutExtension(frameName), true).bitmapData;
     }
 
