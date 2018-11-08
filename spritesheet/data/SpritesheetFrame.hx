@@ -1,7 +1,6 @@
 package spritesheet.data;
 
 
-import flash.display.BitmapData.TextureUvs;
 import openfl.display.IBitmapData;
 
 

@@ -1,7 +1,7 @@
 package spritesheet;
 
 import flash.display.Bitmap as FlashBitmap;
-import flash.display.BitmapData;
+import openfl.display.IBitmapData.TextureUvs;
 
 import openfl._internal.renderer.RenderSession;
 
