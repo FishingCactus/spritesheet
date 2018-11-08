@@ -5,8 +5,6 @@ import flash.display.BitmapData;
 
 import openfl._internal.renderer.RenderSession;
 
-@:access(openfl.display.BitmapData)
-
 class Bitmap extends FlashBitmap {
 	
 	public var textureUvs:TextureUvs;
@@ -28,12 +26,12 @@ class Bitmap extends FlashBitmap {
 
 		} else {
 
-			var savedUvs = bitmapData.__uvData;
+			var savedUvs = bitmapData.uvData;
 			
-			bitmapData.__uvData = textureUvs;
+			bitmapData.uvData = textureUvs;
 			super.__renderGL(renderSession);
 
-			bitmapData.__uvData = savedUvs;
+			bitmapData.uvData = savedUvs;
 
 		}
 

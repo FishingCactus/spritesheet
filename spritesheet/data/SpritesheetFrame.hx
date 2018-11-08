@@ -1,7 +1,8 @@
 package spritesheet.data;
 
 
-import flash.display.BitmapData;
+import flash.display.BitmapData.TextureUvs;
+import openfl.display.IBitmapData;
 
 
 class SpritesheetFrame {
@@ -9,7 +10,7 @@ class SpritesheetFrame {
 	
 	public var name:String;
 	public var label:String;
-	public var bitmapData:BitmapData;
+	public var bitmapData:IBitmapData;
 	public var displayHeight:Int;
 	public var displayWidth:Int;
 	public var height:Int;
@@ -30,6 +31,5 @@ class SpritesheetFrame {
 		this.offsetY = offsetY;
 		
 	}
-	
 	
 }
