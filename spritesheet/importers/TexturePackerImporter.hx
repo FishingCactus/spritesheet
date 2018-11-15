@@ -3,6 +3,7 @@ package spritesheet.importers;
 import spritesheet.data.BehaviorData;
 import haxe.ds.StringMap;
 import spritesheet.data.SpritesheetFrame;
+import openfl.display.IBitmapData;
 import flash.display.BitmapData;
 import haxe.Json;
 
@@ -13,12 +14,12 @@ class TexturePackerImporter {
 
     public function new() {}
 
-    public function parse(path:String, bitmapData:BitmapData, exp:EReg = null):Spritesheet {
+    public function parse(path:String, bitmapData:IBitmapData, exp:EReg = null):Spritesheet {
 
         var json = Json.parse(path);
         var tpFrames:Array<TPFrame> = parseJsonFrames(json);
         var behaviorNames = buildBehaviorMap(tpFrames, exp);
-        return generateSpriteSheetForBehaviors(bitmapData, behaviorNames);
+        return generateSpriteSheetForBehaviors(cast(bitmapData, BitmapData), behaviorNames);
 
     }
 
