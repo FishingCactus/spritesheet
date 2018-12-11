@@ -1,6 +1,6 @@
 package spritesheet;
 
-
+import openfl.display.PixelSnapping;
 import flash.display.BitmapData;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -19,6 +19,7 @@ class AnimatedSprite extends Sprite {
 	public var smoothing:Bool;
 	public var spritesheet:Spritesheet;
 	public var autoUpdate:Bool = false;
+    public var pixelSnapping(get, set): PixelSnapping;
 
 	private var behaviorComplete:Bool;
 	private var behaviorQueue:Array <BehaviorData>;
@@ -263,4 +264,14 @@ class AnimatedSprite extends Sprite {
 
 		return index;
 	}
+
+    function get_pixelSnapping(): PixelSnapping
+    {
+        return bitmap.pixelSnapping;
+    }
+
+    function set_pixelSnapping(value: PixelSnapping): PixelSnapping
+    {
+        return bitmap.pixelSnapping = value;
+    }
 }
